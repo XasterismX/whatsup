@@ -8,4 +8,4 @@ yarn-error.log*
 /.pnp
 .pnp.js
 /src/auth_info
-./.env
+*.env
