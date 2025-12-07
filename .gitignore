@@ -7,6 +7,5 @@ yarn-debug.log*
 yarn-error.log*
 /.pnp
 .pnp.js
-
-.vscode/*
-.env
+/src/auth_info
+./.env
