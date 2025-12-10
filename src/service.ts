@@ -6,8 +6,8 @@ import makeWASocket, {
 } from '@whiskeysockets/baileys';
 import { Boom } from '@hapi/boom';
 import P from 'pino';
+import Fastify from 'fastify'
 import qrcode from 'qrcode-terminal';
-import express from 'express';
 import * as dotenv from 'dotenv';
 import * as path from "node:path";
 import {sendMessage} from "./send_message";
@@ -101,26 +101,46 @@ async function startWhatsAppBot() {
 
 
 
-const app_port = process.env.APP_PRT || 8080;
+const app_port = Number(process.env.APP_PRT) || 8080;
 
 startWhatsAppBot().then((sock) =>{
 
-    const app = express()
+    const fastify = Fastify({ logger: true })
 
-    app.use(express.json())
-    app.use(bodyParser.json())
+    /**
+     * @type {import('fastify').RouteShorthandOptions}
+     * @const
+     */
+    const opts = {
+        schema: {
+            body: {
+                type: 'object',
+                properties: {
+                    number: { type: 'string' },
+                    text: { type: 'string' }
+                }
+            }
+        }
+    }
+    fastify.post<
+        { Body: {
+            number: string
+            text: string
+        }}
+    >('/send',opts,  async (request, rep) => {
+        const {number, text} = request.body;
 
-    app.post('/send', async (req, res) => {
-        const {number, text} = req.body;
     const {success, error}  = await sendMessage(sock, number, text);
     if (success) {
-        res.status(200).send('OK')
+        rep.status(200).send('OK')
 
     }else {
-        res.send(error).status(500);
+        rep.send(error).status(500);
     }
     })
-    app.listen(app_port, () => {})
+    fastify.listen({
+        port: app_port
+    })
 })
     .catch((err: any) => {
     console.error('Критическая ошибка:', err);
