@@ -3,7 +3,7 @@ WhatsApp API сервис на Node.js для отправки и получен
 Технологии
 - Node.js + TypeScript
 - @whiskeysockets/baileys - библиотека для работы с WhatsApp Web API
-- Express - веб-сервер для обработки HTTP запросов
+- Fastify.js - веб-сервер для обработки HTTP запросов
 - QRCode Terminal - генерация QR-кода для авторизации в терминале
 - Pino - логирование
 
